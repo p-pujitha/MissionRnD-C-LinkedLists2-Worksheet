@@ -12,57 +12,73 @@ NOTES:
 */
 
 #include <stdio.h>
+#include <malloc.h>
 
 struct node {
 	int num;
 	struct node *next;
 };
 
-struct node * merge2LinkedLists(struct node *head1, struct node *head2) {
+struct node * cn(int n1)
+{
+	struct node *nn = (struct node *)malloc(sizeof(struct node));
+	nn->num = n1;
+	nn->next = NULL;
+	return nn;
+}
 
-	struct node *i = head1, *j = head2, *temp, *first, *temp2;
 
-	if (i == NULL)
-		return j;
-	else if (j == NULL)
-		return i;
-	else
+struct node * merge2LinkedLists(struct node *head1, struct node *head2)
+{
+	struct node *res = NULL;
+	struct node *nn, *n = NULL;
+	while (head1 != NULL || head2 != NULL)
 	{
-		if (i->num > j->num)
+		if (head1 == NULL)
 		{
-			first = j;
-			j = i;
-			i = first;
+			nn = cn(head2->num);
+			head2 = head2->next;
+		}
+		else if (head2 == NULL)
+		{
+			nn = cn(head1->num);
+			head1 = head1->next;
+		}
+		else if (head1->num < head2->num)
+		{
+			nn = cn(head1->num);
+			head1 = head1->next;
+		}
+		else if (head1->num > head2->num)
+		{
+			nn = cn(head2->num);
+			head2 = head2->next;
+		}
+		else if (head1->num == head2->num)
+		{
+			nn = cn(head2->num);
+			head2 = head2->next;
+			goto lab;
 		}
 
 		else
-			first = i;
-
-		while (1)
 		{
-			if (i->next->num > j->num)
-			{
-				temp = i->next;
-				i->next = j;
-				temp2 = j->next;
-				j->next = temp;
-				i = j;
-				j = temp2;
-			}
-			else
-				i = i->next;
-
-			if (i->next == NULL)
-			{
-				i->next = j;
-				break;
-			}
-
-			if (j == NULL)
-				break;
+			nn = cn(head1->num);
+			n = n->next;
+			head1 = head1->next;
 		}
-
-		return first;
+	lab:
+		if (n == NULL)
+		{
+			n = nn;
+			res = n;
+		}
+		else
+		{
+			n->next = nn;
+			n = nn;
+		}
+		n->next = NULL;
 	}
+	return res;
 }
-
